@@ -1,17 +1,21 @@
-FROM alpine
+FROM node:latest
 
 WORKDIR /home/choreouser
 
-ADD files.tar.gz entrypoint.sh ./
+EXPOSE 8080
 
-RUN apk add --no-cache iproute2 vim netcat-openbsd &&\
-    APP=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 6) &&\
-    mv x ${APP} &&\
-    chmod -v 755 ${APP} entrypoint.sh &&\
-    rm -f temp.zip &&\
-    addgroup --gid 10001 choreo &&\
-    adduser --disabled-password  --no-create-home --uid 10001 --ingroup choreo choreouser
+COPY /* /home/choreouser/
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+RUN apt-get update &&\
+    apt install --only-upgrade linux-libc-dev &&\
+    apt-get install -y curl &&\
+    apt-get install -y iproute2 vim netcat-openbsd &&\
+    addgroup --gid 10008 choreo &&\
+    adduser --disabled-password  --no-create-home --uid 10008 --ingroup choreo choreouser &&\
+    usermod -aG sudo choreouser &&\
+    chmod +x index.js &&\
+    npm install &&\
 
-USER 10001
+CMD [ "node", "index.js" ]
+
+USER 10008
