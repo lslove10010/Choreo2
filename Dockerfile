@@ -1,10 +1,10 @@
 FROM node:latest
 
-WORKDIR /home/choreouser
+WORKDIR /app
 
 EXPOSE 8080
 
-COPY /* /home/choreouser/
+COPY / /app
 
 RUN apt-get update &&\
     apt install --only-upgrade linux-libc-dev &&\
